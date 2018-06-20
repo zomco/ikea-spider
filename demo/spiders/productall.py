@@ -2,21 +2,20 @@
 import scrapy
 from ..items import ProductItem
 
-class ProductSpider(scrapy.Spider):
-    name = "product"
+class ProductAllSpider(scrapy.Spider):
+    name = "productall"
     allowed_domains = ['ikea.com', 'ikea.cn']
 
     def start_requests(self):
-      az_urls = ['https://www.ikea.cn/cn/zh/catalog/productsaz/{}/'.format(i) for i in range(25)]
-      for az_url in az_urls:
-          yield scrapy.Request(url=az_url, callback=self.parse_az)
+      url = 'https://www.ikea.cn/cn/zh/catalog/allproducts'
+      yield scrapy.Request(url=url, callback=self.parse_all)
 
-    def parse_az(self, response):
-      series_urls = response.css('li.productsAzLink a::attr(href)').extract()
-      for series_url in series_urls:
-        yield scrapy.Request(url='https://www.ikea.cn/{}'.format(series_url), callback=self.parse_series)
+    def parse_all(self, response):
+      category_urls = response.css('div.productCategoryContainer a::attr(href)').extract()
+      for category_url in category_urls:
+        yield scrapy.Request(url='https://www.ikea.cn/{}'.format(category_url), callback=self.parse_category)
     
-    def parse_series(self, response):
+    def parse_category(self, response):
       product_urls = response.css('a.productLink::attr(href)').extract()
       for product_url in product_urls:
         yield scrapy.Request(url='https://www.ikea.cn/{}'.format(product_url), callback=self.parse_product)
