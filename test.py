@@ -1,34 +1,12 @@
-# from PIL import Image
+import cv2
+import numpy as np
+from matplotlib import pyplot as plt
 
-# img = Image.open('tmp/ikea.jpg')
-# img = img.convert("RGBA")
-# datas = img.getdata()
-
-# newData = []
-# for item in datas:
-#     if item[0] >= 253 and item[1] >= 253 and item[2] >= 251:
-#         newData.append((255, 255, 255, 0))
-#     else:
-#         newData.append(item)
-
-# img.putdata(newData)
-# img.save("tmp/ikea.png", "PNG")
-
-import json
-import os
-import shutil
-from pprint import pprint
-
-with open('result.json') as f:
-  datas = json.load(f)
-  for data in datas:
-    target_name = '{}_{}.jpg'.format(data['name'], data['number']).replace('/','／') .replace('\\','＼')
-    target_path = os.path.join('targets', target_name)
-    images = data['images']
-    if len(images) == 1:
-      source_path = os.path.join('images', images[0]['path'])
-      print('copying {} to {}'.format(source_path, target_path))
-      shutil.copy(source_path, target_path)
-    else:
-      print('missing {}'.format(target_name))
-
+img = cv2.imread('sources/full/00a2e771a353865c080119b82bcc5d2258e9bb2b.jpg',0)
+edges = cv2.Canny(img,100,200)
+ 
+plt.subplot(121),plt.imshow(img,cmap = 'gray')
+plt.title('Original Image'), plt.xticks([]), plt.yticks([])
+plt.subplot(122),plt.imshow(edges,cmap = 'gray')
+plt.title('Edge Image'), plt.xticks([]), plt.yticks([])
+plt.show()
